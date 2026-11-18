@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pools 4 You - SWMS Sign-on</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--blue:#1f4e8c;--ink:#1b1b1b;--muted:#5a5a5a;--line:#cfd6e0;--bg:#f3f6fa}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:16px}
+header{background:#fff;padding:14px 16px;border-bottom:4px solid var(--blue);text-align:center}
+header img{max-width:220px;width:60%}
+main{max-width:560px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h1{font-size:20px;margin:0 0 6px;color:var(--blue)}
+h2{font-size:17px;margin:0 0 10px;color:var(--blue)}
+p{margin:6px 0;line-height:1.4}
+.step{display:inline-block;background:var(--blue);color:#fff;border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;font-size:14px;margin-right:6px}
+a.btn,button{display:block;width:100%;text-align:center;background:var(--blue);color:#fff;text-decoration:none;border:0;border-radius:8px;padding:14px;font-size:17px;font-weight:600;cursor:pointer}
+button[disabled]{opacity:.6}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+label small{font-weight:400;color:var(--muted)}
+input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:6px;font-size:16px;background:#fff}
+.tick{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:15px;margin-top:14px}
+.tick input{width:22px;height:22px;flex:none;margin-top:1px}
+#sig{width:100%;height:170px;border:1px dashed #8a97a8;border-radius:6px;background:#fff;touch-action:none;display:block}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.link{background:none;color:var(--blue);padding:4px;width:auto;font-size:14px;font-weight:400;text-decoration:underline}
+.err{color:#b00020;font-size:14px;margin-top:8px;display:none}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:8px 16px 24px}
+.hp{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<header><img src="logo.png" alt="Pools 4 You"></header>
+<main>
+  <div class="card">
+    <h1>Safe Work Method Statement</h1>
+    <p>Pool construction, renovation, retaining walls &amp; surrounds (SWMS P4Y-001).</p>
+    <p>All workers must read the SWMS and sign on <b>before starting work</b> on a Pools 4 You site.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">1</span>Read the SWMS</h2>
+    <a class="btn" href="swms.pdf" target="_blank" rel="noopener" id="readBtn">Open the SWMS (PDF)</a>
+  </div>
+
+  <form class="card" id="f" action="https://formsubmit.co/pools4you@tpg.com.au" method="POST" enctype="multipart/form-data">
+    <h2><span class="step">2</span>Sign on</h2>
+    <input type="hidden" name="_subject" id="subj" value="SWMS sign-on">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" value="https://anthony-christensen.github.io/pools4you-swms/thanks.html">
+    <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off">
+    <input type="hidden" name="SWMS" value="P4Y-001 v1.1">
+    <input type="hidden" name="Signed on (date/time)" id="when">
+
+    <label for="site">Job site address</label>
+    <input id="site" name="Job site" required autocomplete="street-address">
+
+    <label for="name">Your full name</label>
+    <input id="name" name="Name" required autocomplete="name">
+
+    <label for="biz">Business name</label>
+    <input id="biz" name="Business" required autocomplete="organization">
+
+    <label for="role">Job role <small>(e.g. excavation, steel, concreter, tiler, electrician)</small></label>
+    <input id="role" name="Job role" required>
+
+    <label for="lic">Licence / competency</label>
+    <select id="lic" name="Licence / competency" required>
+      <option value="">Choose…</option>
+      <option>Construction Card (White Card)</option>
+      <option>QBCC Licence</option>
+      <option>Electrical Licence</option>
+      <option>High Risk Work Licence</option>
+      <option>Plant / machinery VOC</option>
+      <option>Other</option>
+    </select>
+
+    <label for="no">Licence / card number</label>
+    <input id="no" name="Licence / card no." required>
+
+    <label for="other">Other tickets <small>(optional, e.g. first aid, silica awareness, HR truck)</small></label>
+    <input id="other" name="Other tickets">
+
+    <label for="ph">Mobile</label>
+    <input id="ph" name="Phone" type="tel" required autocomplete="tel">
+
+    <label for="abn">ABN <small>(optional)</small></label>
+    <input id="abn" name="ABN" inputmode="numeric">
+
+    <label class="tick"><input type="checkbox" id="ok" name="Read and understood" value="Yes" required>
+      <span>I have read and understood the SWMS. I have the skills, training, licences and certification to do this work, and I agree to follow the controls, safe work instructions and PPE in it.</span></label>
+
+    <label>Signature <small>(sign with your finger)</small></label>
+    <canvas id="sig"></canvas>
+    <div class="row"><span style="font-size:13px;color:var(--muted)">Sign inside the box</span><button type="button" class="link" id="clear">Clear</button></div>
+    <input type="file" name="attachment" id="att" accept="image/png" style="display:none">
+
+    <div class="err" id="err"></div>
+    <p></p>
+    <button type="submit" id="go">Submit sign-on</button>
+  </form>
+  <footer>Pools 4 You · Mark Prodger 0417 763 621 · QBCC 517899</footer>
+</main>
+<script>
+(function(){
+  var c=document.getElementById('sig'),x=c.getContext('2d'),drawn=false,down=false;
+  function size(){var r=c.getBoundingClientRect(),d=window.devicePixelRatio||1,img=drawn?c.toDataURL():null;
+    c.width=r.width*d;c.height=r.height*d;x.scale(d,d);x.lineWidth=2.4;x.lineCap='round';x.lineJoin='round';x.strokeStyle='#111';
+    if(img){var i=new Image();i.onload=function(){x.drawImage(i,0,0,r.width,r.height)};i.src=img;}}
+  size();window.addEventListener('resize',size);
+  function pos(e){var r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+  c.addEventListener('pointerdown',function(e){down=true;c.setPointerCapture(e.pointerId);var p=pos(e);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[0]+.1,p[1]+.1);x.stroke();drawn=true;e.preventDefault()});
+  c.addEventListener('pointermove',function(e){if(!down)return;var p=pos(e);x.lineTo(p[0],p[1]);x.stroke();e.preventDefault()});
+  ['pointerup','pointercancel','pointerleave'].forEach(function(t){c.addEventListener(t,function(){down=false})});
+  document.getElementById('clear').onclick=function(){x.clearRect(0,0,c.width,c.height);drawn=false};
+
+  var f=document.getElementById('f'),err=document.getElementById('err'),sent=false;
+  f.addEventListener('submit',function(e){
+    if(sent){return}
+    e.preventDefault();err.style.display='none';
+    if(!drawn){err.textContent='Please sign in the box.';err.style.display='block';return}
+    var n=document.getElementById('name').value.trim();
+    document.getElementById('subj').value='SWMS sign-on - '+n+' - '+document.getElementById('site').value.trim();
+    document.getElementById('when').value=new Date().toLocaleString('en-AU',{timeZone:'Australia/Brisbane'});
+    // white background so the signature shows in any email viewer
+    var o=document.createElement('canvas');o.width=c.width;o.height=c.height;var ox=o.getContext('2d');
+    ox.fillStyle='#fff';ox.fillRect(0,0,o.width,o.height);ox.drawImage(c,0,0);
+    o.toBlob(function(b){
+      try{var dt=new DataTransfer();dt.items.add(new File([b],'signature - '+n.replace(/[^\w ]/g,'')+'.png',{type:'image/png'}));document.getElementById('att').files=dt.files;}catch(_){}
+      sent=true;var g=document.getElementById('go');g.disabled=true;g.textContent='Sending…';f.submit();
+    },'image/png');
+  });
+})();
+</script>
+</body>
+</html>
