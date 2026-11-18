@@ -46,12 +46,9 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:8px 16px 24px
     <a class="btn" href="swms.pdf" target="_blank" rel="noopener" id="readBtn">Open the SWMS (PDF)</a>
   </div>
 
-  <form class="card" id="f" action="https://formsubmit.co/pools4you@tpg.com.au" method="POST" enctype="multipart/form-data">
+  <form class="card" id="f">
     <h2><span class="step">2</span>Sign on</h2>
     <input type="hidden" name="_subject" id="subj" value="SWMS sign-on">
-    <input type="hidden" name="_template" value="table">
-    <input type="hidden" name="_captcha" value="false">
-    <input type="hidden" name="_next" value="https://anthony-christensen.github.io/pools4you-swms/thanks.html">
     <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off">
     <input type="hidden" name="SWMS" value="P4Y-001 v1.1">
     <input type="hidden" name="Signed on (date/time)" id="when">
@@ -97,7 +94,6 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:8px 16px 24px
     <label>Signature <small>(sign with your finger)</small></label>
     <canvas id="sig"></canvas>
     <div class="row"><span style="font-size:13px;color:var(--muted)">Sign inside the box</span><button type="button" class="link" id="clear">Clear</button></div>
-    <input type="file" name="attachment" id="att" accept="image/png" style="display:none">
 
     <div class="err" id="err"></div>
     <p></p>
@@ -118,21 +114,21 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:8px 16px 24px
   ['pointerup','pointercancel','pointerleave'].forEach(function(t){c.addEventListener(t,function(){down=false})});
   document.getElementById('clear').onclick=function(){x.clearRect(0,0,c.width,c.height);drawn=false};
 
-  var f=document.getElementById('f'),err=document.getElementById('err'),sent=false;
+  var API='https://script.google.com/macros/s/AKfycbwUE8xUzXgIxZhKOlk0OgOM46tTIdcIi5BB7UPE1z2HrQopn225RaRaUaZybskt1uA/exec';
+  var f=document.getElementById('f'),err=document.getElementById('err'),g=document.getElementById('go'),busy=false;
+  function fail(m){err.textContent=m;err.style.display='block';busy=false;g.disabled=false;g.textContent='Submit sign-on'}
   f.addEventListener('submit',function(e){
-    if(sent){return}
-    e.preventDefault();err.style.display='none';
-    if(!drawn){err.textContent='Please sign in the box.';err.style.display='block';return}
-    var n=document.getElementById('name').value.trim();
-    document.getElementById('subj').value='SWMS sign-on - '+n+' - '+document.getElementById('site').value.trim();
+    e.preventDefault();if(busy)return;err.style.display='none';
+    if(!drawn){fail('Please sign in the box.');return}
     document.getElementById('when').value=new Date().toLocaleString('en-AU',{timeZone:'Australia/Brisbane'});
-    // white background so the signature shows in any email viewer
-    var o=document.createElement('canvas');o.width=c.width;o.height=c.height;var ox=o.getContext('2d');
-    ox.fillStyle='#fff';ox.fillRect(0,0,o.width,o.height);ox.drawImage(c,0,0);
-    o.toBlob(function(b){
-      try{var dt=new DataTransfer();dt.items.add(new File([b],'signature - '+n.replace(/[^\w ]/g,'')+'.png',{type:'image/png'}));document.getElementById('att').files=dt.files;}catch(_){}
-      sent=true;var g=document.getElementById('go');g.disabled=true;g.textContent='Sending…';f.submit();
-    },'image/png');
+    var o=document.createElement('canvas'),w=600,h=Math.round(600*c.height/c.width);o.width=w;o.height=h;var ox=o.getContext('2d');
+    ox.fillStyle='#fff';ox.fillRect(0,0,w,h);ox.drawImage(c,0,0,w,h);
+    var d={};new FormData(f).forEach(function(v,k){d[k]=v});d.signature=o.toDataURL('image/png');
+    busy=true;g.disabled=true;g.textContent='Sending…';
+    fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)})
+      .then(function(r){return r.json()})
+      .then(function(r){if(r.ok)location.href='thanks.html';else fail('Sorry, that didn't send ('+(r.error||'error')+'). Please try again or see Mark.')})
+      .catch(function(){fail('Sorry, that didn't send. Check your signal and try again, or see Mark.')});
   });
 })();
 </script>
